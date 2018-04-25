@@ -2,6 +2,8 @@
 
 Dropdown list with autocomplete function made only with Vanilla JavaScript.
 
+![AutoComplete](https://github.com/gmurayama/autocomplete-vanillajs/blob/master/autocomplete.png)
+
 ## Getting Started
 
 ### Installing
