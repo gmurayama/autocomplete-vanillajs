@@ -1,0 +1,39 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>AutoComplete Vanilla JS</title>
+    <meta name="description" content="AutoComplete Vanilla JS example">
+    <meta name="author" content="gmurayama">
+
+    <link rel="stylesheet" href="src/autocomplete.css">
+
+    <style>
+        input {
+            padding: 5px 8px;
+            border-radius: 5px;
+            box-shadow: 0 0 2px 1px #FAFAFA;
+            border: 1px solid #DFDFDF;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type="text" data-autocomplete data-autocomplete-source="list.html" placeholder="Try to type &quot;JavaScript&quot;" />
+    </div>
+    <script type="text/javascript" src="src/autocomplete.js"></script>
+    <script type="text/javascript">
+        var element = document.querySelector('input');
+        var autoComplete = new AutoComplete(element);
+
+        element.onkeyup = function () {
+            autoComplete.getSuggestionList();
+        }
+    </script>
+</body>
+
+</html>
