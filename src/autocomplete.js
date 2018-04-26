@@ -185,3 +185,11 @@ var AutoComplete = (function () {
 
     return AutoComplete;
 })();
+
+window.addEventListener('click', function (event) {
+    var dropdowns = document.querySelectorAll('.autocomplete.dropdown');
+
+    for (var i = 0; i < dropdowns.length; i++) {
+        dropdowns[i].parentNode.removeChild(dropdowns[i]);
+    }
+});
