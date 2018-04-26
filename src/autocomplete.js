@@ -114,9 +114,9 @@ var AutoComplete = (function () {
             for (var i = 0; i < list.length; i++) {
                 var item = list[i];
 
-                var textHighlightStart = item.toLowerCase().indexOf(textoToHighlight.toLowerCase());
-                var textHighlightEnd = textoToHighlight.length;
-                var itemHighlight = item.slice(0, textHighlightStart) + '<b>' + item.slice(textHighlightStart, textHighlightEnd) + '</b>' + item.slice(textHighlightEnd, item.length);
+                var startIndex = item.toLowerCase().indexOf(textoToHighlight.toLowerCase());
+                var endIndex = startIndex + textoToHighlight.length;
+                var itemHighlight = item.slice(0, startIndex) + '<b>' + item.slice(startIndex, endIndex) + '</b>' + item.slice(endIndex, item.length);
                 dropdownList += '<li data-value="' + item + '" tabindex="1">' + itemHighlight + '</li>';
             }
 
