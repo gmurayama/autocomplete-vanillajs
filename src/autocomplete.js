@@ -51,7 +51,7 @@ var AutoComplete = (function () {
 
                 var objectContext = this;
 
-                this.createHttpRequest({
+                createHttpRequest({
                     url: config.source,
                     method: 'POST',
                     data: config.data,
@@ -77,42 +77,6 @@ var AutoComplete = (function () {
             else {
                 this.removeDropDown();
             }
-        },
-
-        createHttpRequest: function ({
-            method,
-            url,
-            data = {},
-            success = function () { },
-            error = function () { }
-        }) {
-            httpRequest = new XMLHttpRequest();
-            httpRequest.open(method.toUpperCase(), url);
-            httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-            // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
-            var dataSerialized = (function (obj) {
-                var str = [];
-                for (var p in obj)
-                    if (obj.hasOwnProperty(p)) {
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    }
-                return str.join("&");
-            })(data);
-
-            httpRequest.onreadystatechange = function () {
-                if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                    var responseData = JSON.parse(httpRequest.responseText);
-                    if (httpRequest.status === 200) {
-                        success(responseData);
-                    }
-                    else {
-                        error(responseData);
-                    }
-                }
-            }
-
-            httpRequest.send(dataSerialized);
         },
 
         createDropDown: function () {
@@ -173,8 +137,6 @@ var AutoComplete = (function () {
         removeDropDown: function () {
             var parent = this.element.parentNode;
             var dropdown = parent.querySelector('.autocomplete.dropdown');
-            console.log(parent);
-            console.log(dropdown);
 
             if (!isEmpty(dropdown))
                 parent.removeChild(dropdown);
@@ -183,6 +145,42 @@ var AutoComplete = (function () {
 
     function isEmpty(variable) {
         return variable === null || variable === undefined || variable == '';
+    }
+    
+    function createHttpRequest ({
+        method,
+        url,
+        data = {},
+        success = function () { },
+        error = function () { }
+    }) {
+        httpRequest = new XMLHttpRequest();
+        httpRequest.open(method.toUpperCase(), url);
+        httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
+        var dataSerialized = (function (obj) {
+            var str = [];
+            for (var p in obj)
+                if (obj.hasOwnProperty(p)) {
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                }
+            return str.join("&");
+        })(data);
+
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                var responseData = JSON.parse(httpRequest.responseText);
+                if (httpRequest.status === 200) {
+                    success(responseData);
+                }
+                else {
+                    error(responseData);
+                }
+            }
+        }
+
+        httpRequest.send(dataSerialized);
     }
 
     return AutoComplete;
