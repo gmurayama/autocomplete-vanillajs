@@ -51,28 +51,28 @@ var AutoComplete = (function () {
 
                 var objectContext = this;
 
-                createHttpRequest({
-                    url: config.source,
-                    method: 'POST',
-                    data: config.data,
-                    success: function (response) {
+                createHttpRequest(
+                    config.source,
+                    'POST',
+                    config.data,
+                    function (response) {
                         if (response.length > 0) {
                             var dropDown = objectContext.createDropDown();
 
-                            objectContext.populateDropDown({
-                                dropDownElement: dropDown,
-                                list: response,
-                                textoToHighlight: config.text
-                            });
+                            objectContext.populateDropDown(
+                                dropDown,
+                                response,
+                                config.text
+                            );
                         } else {
                             objectContext.removeDropDown();
                         }
                     },
-                    error: function (response) {
+                    function (response) {
                         console.log(response);
                         alert("ERROR autocomplete.js");
                     }
-                });
+                );
             } 
             else {
                 this.removeDropDown();
@@ -104,11 +104,11 @@ var AutoComplete = (function () {
             return dropdown;
         },
 
-        populateDropDown: function ({
+        populateDropDown: function (
             dropDownElement,
             list,
             textoToHighlight
-        }) {
+        ) {
             var dropdownList = '';
 
             for (var i = 0; i < list.length; i++) {
@@ -147,13 +147,13 @@ var AutoComplete = (function () {
         return variable === null || variable === undefined || variable == '';
     }
     
-    function createHttpRequest ({
-        method,
+    function createHttpRequest (
         url,
+        method,
         data = {},
         success = function () { },
         error = function () { }
-    }) {
+    ) {
         httpRequest = new XMLHttpRequest();
         httpRequest.open(method.toUpperCase(), url);
         httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
