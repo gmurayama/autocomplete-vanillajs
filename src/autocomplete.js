@@ -150,9 +150,9 @@ var AutoComplete = (function () {
     function createHttpRequest (
         url,
         method,
-        data = {},
-        success = function () { },
-        error = function () { }
+        data,
+        success,
+        error
     ) {
         httpRequest = new XMLHttpRequest();
         httpRequest.open(method.toUpperCase(), url);
