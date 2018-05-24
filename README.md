@@ -30,4 +30,4 @@ Use `autoComplete.getSuggestionList()` to start the autocomplete.
 
 ## License
 
-This project is licensed under the *The Unlicense* License - see the LICENSE.md file for details
+This project is licensed under the *The Unlicense* License - see the [LICENSE](https://github.com/gmurayama/autocomplete-vanillajs/blob/master/LICENSE) file for details
