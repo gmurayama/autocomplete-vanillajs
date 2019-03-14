@@ -1,15 +1,15 @@
 var AutoComplete = (function () {
     var AutoComplete = function (htmlElement) {
-        this.element = htmlElement;
-        this.stopListSuggestionRetrieve = false;
+        this.htmlElement = htmlElement;
+        this.loadSuggestionList = false;
 
         var objectContext = this;
 
-        this.element.addEventListener('keyup', function (event) {
+        this.htmlElement.addEventListener('keyup', function (event) {
             var key = event.key | event.keyCode;
             var itemList = event.target.parentNode.querySelectorAll('.autocomplete.dropdown ul li');
             var itemSelected = event.target.parentNode.querySelector('.autocomplete.dropdown ul li.selected');
-            
+
             var findIndex = (function (array, item) {
                 for (var i = 0; i < array.length; i++) {
                     if (array[i] === item) {
@@ -34,18 +34,18 @@ var AutoComplete = (function () {
             if (isArrowDown(key)) {
                 var index = findIndex(itemList, itemSelected);
                 addSelectedClassToItem(itemList, index, index + 1);
-                objectContext.stopListSuggestionRetrieve = true;
+                objectContext.loadSuggestionList = true;
             }
             else
                 if (isArrowUp(key)) {
                     var index = findIndex(itemList, itemSelected);
                     addSelectedClassToItem(itemList, index, index - 1);
-                    objectContext.stopListSuggestionRetrieve = true;
+                    objectContext.loadSuggestionList = true;
                 }
                 else
                     if (isEnter(key)) {
                         itemSelected.click();
-                        objectContext.stopListSuggestionRetrieve = true;
+                        objectContext.loadSuggestionList = true;
                     }
         });
     }
@@ -53,25 +53,25 @@ var AutoComplete = (function () {
     AutoComplete.prototype = {
         loadConfiguration: function () {
             // Execute AutoComplete?
-            var autoComplete = this.element.dataset['autocomplete'];
+            var autoComplete = this.htmlElement.dataset['autocomplete'];
 
             if (autoComplete === false)
                 return false;
 
             // variable name to send
-            var dataAttrPostVarName = this.element.dataset['autocompletePostvarName'];
+            var dataAttrPostVarName = this.htmlElement.dataset['autocompletePostvarName'];
             var defaultPostVarName = 'text';
             var postVarName = !isEmpty(dataAttrPostVarName) ? dataAttrPostVarName : defaultPostVarName;
 
-            var text = this.element.value;
+            var text = this.htmlElement.value;
 
             // minimum text length to execute autocomplete AJAX
             var defaultMinLength = 3;
-            var dataAttrMinLength = this.element.dataset['autocomplete-minlength'];
+            var dataAttrMinLength = this.htmlElement.dataset['autocomplete-minlength'];
             var minLength = !isEmpty(dataAttrMinLength) ? dataAttrMinLength : defaultMinLength;
 
             // endpoint
-            var source = this.element.dataset['autocompleteSource'];
+            var source = this.htmlElement.dataset['autocompleteSource'];
 
             if (isEmpty(source)) {
                 console.log('ERROR autocomplete-source is a required data attribute');
@@ -92,8 +92,8 @@ var AutoComplete = (function () {
         },
 
         getSuggestionList: function () {
-            if (this.stopListSuggestionRetrieve) {
-                this.stopListSuggestionRetrieve = false;
+            if (this.loadSuggestionList) {
+                this.loadSuggestionList = false;
                 return;
             }
 
@@ -125,29 +125,29 @@ var AutoComplete = (function () {
                         alert("ERROR autocomplete.js");
                     }
                 );
-            } 
+            }
             else {
                 this.removeDropDown();
             }
         },
 
         createDropDown: function () {
-            var dropdown = this.element.parentNode.querySelector('.autocomplete.dropdown');
+            var dropdown = this.htmlElement.parentNode.querySelector('.autocomplete.dropdown');
 
             if (isEmpty(dropdown)) {
                 var dropdownNode = document.createElement('div');
                 dropdownNode.setAttribute('tabindex', '0');
                 dropdownNode.setAttribute('class', 'autocomplete dropdown');
                 dropdownNode.innerHTML = '<ul></ul>';
-                this.element.parentNode.appendChild(dropdownNode);
-                dropdown = this.element.parentNode.querySelector('.autocomplete.dropdown');
+                this.htmlElement.parentNode.appendChild(dropdownNode);
+                dropdown = this.htmlElement.parentNode.querySelector('.autocomplete.dropdown');
             }
 
             dropdown.querySelector('ul').innerHTML = '';
 
-            var elementPosition = { left: this.element.offsetLeft, top: this.element.offsetTop };
-            var elementHeight = this.element.offsetHeight;
-            var elementWidth = this.element.offsetWidth;
+            var elementPosition = { left: this.htmlElement.offsetLeft, top: this.htmlElement.offsetTop };
+            var elementHeight = this.htmlElement.offsetHeight;
+            var elementWidth = this.htmlElement.offsetWidth;
 
             dropdown.style.width = elementWidth + 'px';
             dropdown.style.left = elementPosition.left;
@@ -174,10 +174,10 @@ var AutoComplete = (function () {
 
             dropDownElement.querySelector('ul').innerHTML += dropdownList;
 
-            var element = this.element;
+            var element = this.htmlElement;
 
             var listItems = dropDownElement.querySelectorAll('ul li');
-            
+
             for (var i = 0; i < listItems.length; i++) {
                 listItems[i].onclick = (function () {
                     var text = this.dataset['value'];
@@ -216,7 +216,7 @@ var AutoComplete = (function () {
         },
 
         removeDropDown: function () {
-            var parent = this.element.parentNode;
+            var parent = this.htmlElement.parentNode;
             var dropdown = parent.querySelector('.autocomplete.dropdown');
 
             if (!isEmpty(dropdown))
@@ -227,7 +227,7 @@ var AutoComplete = (function () {
     function isEmpty(variable) {
         return variable === null || variable === undefined || variable == '';
     }
-    
+
     function isArrowDown(key) {
         return key === 'ArrowDown' || key === 40;
     }
