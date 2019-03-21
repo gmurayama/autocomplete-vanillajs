@@ -1,52 +1,11 @@
 var AutoComplete = (function () {
     var AutoComplete = function (htmlElement) {
         this.htmlElement = htmlElement;
-        this.loadSuggestionList = false;
-
+        this.loadSuggestionList = true;
         var objectContext = this;
 
-        this.htmlElement.addEventListener('keyup', function (event) {
-            var key = event.key | event.keyCode;
-            var itemList = event.target.parentNode.querySelectorAll('.autocomplete.dropdown ul li');
-            var itemSelected = event.target.parentNode.querySelector('.autocomplete.dropdown ul li.selected');
-
-            var findIndex = (function (array, item) {
-                for (var i = 0; i < array.length; i++) {
-                    if (array[i] === item) {
-                        return i;
-                    }
-                }
-
-                return -1;
-            });
-
-            var addSelectedClassToItem = (function (itemList, indexOfCurrentSelectedElement, indexOfElementToSelect) {
-                var currentItem = itemList[indexOfCurrentSelectedElement];
-                var itemToBeSelected = itemList[indexOfElementToSelect];
-
-                if (currentItem)
-                    currentItem.className = currentItem.className.replace('selected', '');
-
-                if (itemToBeSelected)
-                    itemToBeSelected.className += ' selected';
-            });
-
-            if (isArrowDown(key)) {
-                var index = findIndex(itemList, itemSelected);
-                addSelectedClassToItem(itemList, index, index + 1);
-                objectContext.loadSuggestionList = true;
-            }
-            else
-                if (isArrowUp(key)) {
-                    var index = findIndex(itemList, itemSelected);
-                    addSelectedClassToItem(itemList, index, index - 1);
-                    objectContext.loadSuggestionList = true;
-                }
-                else
-                    if (isEnter(key)) {
-                        itemSelected.click();
-                        objectContext.loadSuggestionList = true;
-                    }
+        this.htmlElement.addEventListener('keyup', function (e) {
+            objectContext.loadSuggestionList = selectItemFromSuggestionList(e);
         });
     }
 
@@ -92,8 +51,8 @@ var AutoComplete = (function () {
         },
 
         getSuggestionList: function () {
-            if (this.loadSuggestionList) {
-                this.loadSuggestionList = false;
+            if (!this.loadSuggestionList) {
+                this.loadSuggestionList = true;
                 return;
             }
 
@@ -221,7 +180,59 @@ var AutoComplete = (function () {
 
             if (!isEmpty(dropdown))
                 parent.removeChild(dropdown);
+        },
+
+        preventSuggestionListToLoad: function () {
+            this.loadSuggestionList = false;
         }
+    }
+
+    function selectItemFromSuggestionList (event) {
+        var key = event.key | event.keyCode;
+        var itemList = event.target.parentNode.querySelectorAll('.autocomplete.dropdown ul li');
+        var itemSelected = event.target.parentNode.querySelector('.autocomplete.dropdown ul li.selected');
+
+        var findIndex = (function (array, item) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i] === item) {
+                    return i;
+                }
+            }
+
+            return -1;
+        });
+
+        var addSelectedClassToItem = (function (itemList, indexOfCurrentSelectedElement, indexOfElementToSelect) {
+            var currentItem = itemList[indexOfCurrentSelectedElement];
+            var itemToBeSelected = itemList[indexOfElementToSelect];
+
+            if (currentItem)
+                currentItem.className = currentItem.className.replace('selected', '');
+
+            if (itemToBeSelected)
+                itemToBeSelected.className += ' selected';
+        });
+
+        if (isArrowDown(key)) {
+            var index = findIndex(itemList, itemSelected);
+            addSelectedClassToItem(itemList, index, index + 1);
+            return false;
+        }
+        else
+            if (isArrowUp(key)) {
+                var index = findIndex(itemList, itemSelected);
+                addSelectedClassToItem(itemList, index, index - 1);
+                AutoComplete.prototype.preventSuggestionListToLoad();
+                return false;
+            }
+            else
+                if (isEnter(key)) {
+                    itemSelected.click();
+                    AutoComplete.prototype.preventSuggestionListToLoad();
+                    return false;
+                }
+                else
+                    return true;
     }
 
     function isEmpty(variable) {
